@@ -33,7 +33,7 @@ export default function LoginPage() {
         onSubmit={onSubmit}
         className="bg-white p-8 rounded-xl shadow w-96 space-y-4"
       >
-        <h1 className="text-2xl font-semibold">Admin Login</h1>
+        <h1 className="text-2xl font-semibold">Tap hoa co honG</h1>
         {error && <p className="text-red-600 text-sm">{error}</p>}
         <input
           type="email"

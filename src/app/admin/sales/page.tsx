@@ -42,9 +42,16 @@ export default async function SalesPage({
       <h2 className="text-2xl font-semibold">Sales</h2>
       <SaleForm products={products ?? []} />
       <SalesTable
-        sales={sales ?? []}
-        products={(products ?? []).map((p) => ({ id: p.id, name: p.name }))}
-        initial={{ from: from ?? "", to: to ?? "", product: product ?? "" }}
+        sales={sales ?? ([] as any[])}
+        products={(products ?? []).map((p) => ({
+          id: p.id,
+          name: p.name,
+        }))}
+        initial={{
+          from: from ?? "",
+          to: to ?? "",
+          product: product ?? "",
+        }}
       />
     </div>
   );
