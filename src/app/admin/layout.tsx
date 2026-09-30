@@ -36,10 +36,10 @@ export default async function AdminLayout({
     <div className="min-h-screen lg:flex">
       <aside className="border-b-4 border-black bg-[#1040C0] text-white lg:min-h-screen lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r-4">
         <div className="flex items-center gap-3 border-b-2 border-white/50 p-4 lg:p-6">
-          <div aria-hidden="true" className="flex items-center gap-1">
-            <Circle size={17} fill="#F0C020" className="text-[#F0C020]" />
-            <Square size={17} fill="#D02020" className="text-[#D02020]" />
-            <Triangle size={17} fill="white" className="text-white" />
+          <div aria-hidden="true" className="flex flex-col items-center gap-1">
+            <Circle size={14} fill="#F0C020" className="text-[#F0C020]" />
+            <Square size={14} fill="#D02020" className="text-[#D02020]" />
+            <Triangle size={14} fill="white" className="text-white" />
           </div>
           <h1 className="text-lg font-black uppercase leading-none">
             Tạp hóa Cô Hồng

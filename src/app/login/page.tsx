@@ -54,7 +54,7 @@ function LoginForm() {
             <span className="size-4 border-2 border-black bg-[#D02020]" />
             <span className="size-4 border-2 border-black bg-white [clip-path:polygon(50%_0%,0%_100%,100%_100%)]" />
           </div>
-          <h1 className="max-w-[10ch] text-4xl font-black uppercase leading-[0.9] sm:text-6xl">
+          <h1 className="max-w-[10ch] text-4xl font-black uppercase sm:text-6xl leading-[normal]">
             Tạp hóa Cô Hồng
           </h1>
           <div className="mt-6 h-2 w-20 bg-[#F0C020]" />
