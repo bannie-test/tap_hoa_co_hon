@@ -24,7 +24,8 @@ export async function createProduct(formData: FormData) {
     stock: formData.get("stock") || 0,
     low_stock_threshold: formData.get("low_stock_threshold") || 5,
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success)
+    return { error: "Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("products").insert({
@@ -32,7 +33,7 @@ export async function createProduct(formData: FormData) {
     sku: parsed.data.sku || null,
     category_id: parsed.data.category_id || null,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: "Không thể thêm sản phẩm. Vui lòng thử lại." };
   revalidatePath("/admin/products");
   return { ok: true };
 }
@@ -47,7 +48,8 @@ export async function updateProduct(id: string, formData: FormData) {
     stock: formData.get("stock") || 0,
     low_stock_threshold: formData.get("low_stock_threshold") || 5,
   });
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success)
+    return { error: "Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại." };
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -58,7 +60,7 @@ export async function updateProduct(id: string, formData: FormData) {
       category_id: parsed.data.category_id || null,
     })
     .eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: "Không thể cập nhật sản phẩm. Vui lòng thử lại." };
   revalidatePath("/admin/products");
   return { ok: true };
 }
@@ -66,7 +68,7 @@ export async function updateProduct(id: string, formData: FormData) {
 export async function deleteProduct(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("products").delete().eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: "Không thể xóa sản phẩm. Vui lòng thử lại." };
   revalidatePath("/admin/products");
   return { ok: true };
 }

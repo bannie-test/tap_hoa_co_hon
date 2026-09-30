@@ -15,7 +15,10 @@ const schema = z.object({
 
 export async function recordSale(formData: FormData) {
   const parsed = schema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return { error: parsed.error.issues[0].message };
+  if (!parsed.success)
+    return {
+      error: "Thông tin giao dịch không hợp lệ. Vui lòng kiểm tra lại.",
+    };
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("record_sale", {
@@ -26,7 +29,11 @@ export async function recordSale(formData: FormData) {
     p_customer_phone: parsed.data.customer_phone || null,
     p_note: parsed.data.note || null,
   });
-  if (error) return { error: error.message };
+  if (error)
+    return {
+      error:
+        "Không thể ghi nhận giao dịch. Vui lòng kiểm tra tồn kho và thử lại.",
+    };
   revalidatePath("/admin/sales");
   revalidatePath("/admin");
   return { ok: true };

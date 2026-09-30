@@ -39,7 +39,9 @@ export default async function SalesPage({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Sales</h2>
+      <h2 className="border-b-4 border-black pb-3 text-3xl font-black uppercase leading-none sm:text-4xl">
+        Bán hàng
+      </h2>
       <SaleForm products={products ?? []} />
       <SalesTable
         sales={sales ?? ([] as any[])}

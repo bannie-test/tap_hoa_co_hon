@@ -54,31 +54,33 @@ export function ProductsTable({
   }
 
   async function onDelete(id: string) {
-    if (!confirm("Delete product?")) return;
+    if (!confirm("Bạn có chắc muốn xóa sản phẩm này không?")) return;
     start(async () => {
       await deleteProduct(id);
     });
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm">
-      <div className="p-3 flex flex-wrap gap-2 border-b">
-        <div className="flex items-center gap-2 border rounded px-2 py-1 flex-1 min-w-[200px]">
-          <Search size={16} className="text-slate-400" />
+    <div className="bauhaus-panel bauhaus-shadow overflow-hidden">
+      <div className="flex flex-wrap gap-2 border-b-2 border-black p-3">
+        <div className="flex min-h-11 min-w-[200px] flex-1 items-center gap-2 border-2 border-black bg-white px-2">
+          <Search size={16} aria-hidden="true" />
           <input
+            aria-label="Tìm sản phẩm theo tên hoặc mã SKU"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && applyFilters()}
-            placeholder="Search by name or SKU…"
-            className="w-full outline-none text-sm"
+            placeholder="Tìm theo tên hoặc mã SKU…"
+            className="w-full border-0 bg-transparent text-sm outline-none"
           />
         </div>
         <select
           value={cat}
           onChange={(e) => setCat(e.target.value)}
-          className="border rounded px-2 py-1 text-sm"
+          aria-label="Lọc theo danh mục"
+          className="bauhaus-field w-auto text-sm"
         >
-          <option value="">All categories</option>
+          <option value="">Tất cả danh mục</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -86,50 +88,56 @@ export function ProductsTable({
           ))}
         </select>
         <button
+          type="button"
           onClick={applyFilters}
-          className="bg-slate-900 text-white rounded px-3 py-1 text-sm"
+          className="bauhaus-button bauhaus-button-blue text-sm"
         >
-          Filter
+          Lọc
         </button>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left">
+        <table className="bauhaus-table min-w-[760px]">
+          <thead>
             <tr>
-              <th className="p-3">Name</th>
-              <th className="p-3">SKU</th>
-              <th className="p-3">Category</th>
-              <th className="p-3 text-right">Price</th>
-              <th className="p-3 text-right">Stock</th>
-              <th className="p-3 w-40"></th>
+              <th>Sản phẩm</th>
+              <th>Mã SKU</th>
+              <th>Danh mục</th>
+              <th className="text-right">Giá bán</th>
+              <th className="text-right">Tồn kho</th>
+              <th className="w-40">
+                <span className="sr-only">Thao tác</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {products.map((p) =>
               editing === p.id ? (
-                <tr key={p.id} className="border-t">
-                  <td colSpan={6} className="p-3">
+                <tr key={p.id}>
+                  <td colSpan={6}>
                     <form
                       action={(fd) => onUpdate(p.id, fd)}
-                      className="grid grid-cols-2 lg:grid-cols-6 gap-2"
+                      className="grid grid-cols-2 gap-2 lg:grid-cols-6"
                     >
                       <input
                         name="name"
                         defaultValue={p.name}
-                        className="border rounded px-2 py-1"
+                        aria-label="Tên sản phẩm"
+                        className="bauhaus-field"
                       />
                       <input
                         name="sku"
                         defaultValue={p.sku ?? ""}
-                        className="border rounded px-2 py-1"
+                        aria-label="Mã SKU"
+                        className="bauhaus-field"
                       />
                       <select
                         name="category_id"
                         defaultValue={p.category_id ?? ""}
-                        className="border rounded px-2 py-1"
+                        aria-label="Danh mục"
+                        className="bauhaus-field"
                       >
-                        <option value="">None</option>
+                        <option value="">Không có danh mục</option>
                         {categories.map((c) => (
                           <option key={c.id} value={c.id}>
                             {c.name}
@@ -141,75 +149,87 @@ export function ProductsTable({
                         type="number"
                         step="0.01"
                         defaultValue={p.price}
-                        className="border rounded px-2 py-1"
+                        aria-label="Giá bán"
+                        className="bauhaus-field"
                       />
                       <input
                         name="stock"
                         type="number"
                         defaultValue={p.stock}
-                        className="border rounded px-2 py-1"
+                        aria-label="Tồn kho"
+                        className="bauhaus-field"
                       />
                       <input
                         name="cost"
                         type="number"
                         step="0.01"
                         defaultValue={p.cost ?? 0}
-                        className="border rounded px-2 py-1"
+                        className="bauhaus-field"
                         hidden
                       />
                       <input
                         name="low_stock_threshold"
                         type="number"
                         defaultValue={p.low_stock_threshold ?? 5}
-                        className="border rounded px-2 py-1"
+                        aria-label="Ngưỡng cảnh báo tồn kho thấp"
+                        className="bauhaus-field"
                       />
-                      <div className="col-span-2 lg:col-span-6 flex gap-2">
-                        <button className="bg-slate-900 text-white rounded px-3 py-1">
-                          Save
+                      <div className="col-span-2 flex gap-2 lg:col-span-6">
+                        <button
+                          disabled={pending}
+                          className="bauhaus-button bauhaus-button-red text-sm"
+                        >
+                          Lưu
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditing(null)}
-                          className="border rounded px-3 py-1"
+                          className="bauhaus-button bauhaus-button-outline text-sm"
                         >
-                          Cancel
+                          Hủy
                         </button>
                       </div>
                     </form>
                   </td>
                 </tr>
               ) : (
-                <tr key={p.id} className="border-t">
-                  <td className="p-3 font-medium">{p.name}</td>
-                  <td className="p-3 text-slate-500">{p.sku ?? "—"}</td>
-                  <td className="p-3">{p.categories?.name ?? "—"}</td>
-                  <td className="p-3 text-right">{formatCurrency(p.price)}</td>
+                <tr key={p.id}>
+                  <td className="font-bold">{p.name}</td>
+                  <td className="text-black/60">{p.sku ?? "—"}</td>
+                  <td>{p.categories?.name ?? "—"}</td>
+                  <td className="text-right">{formatCurrency(p.price)}</td>
                   <td
-                    className={`p-3 text-right ${p.stock <= (p.low_stock_threshold ?? 5) ? "text-amber-600 font-medium" : ""}`}
+                    className={`text-right ${p.stock <= (p.low_stock_threshold ?? 5) ? "font-bold text-[#D02020]" : ""}`}
                   >
                     {p.stock}
                   </td>
-                  <td className="p-3 flex gap-2 justify-end">
-                    <button
-                      onClick={() => setEditing(p.id)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(p.id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <td>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditing(p.id)}
+                        className="bauhaus-button bauhaus-button-outline min-h-9 px-2 py-1 text-xs"
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDelete(p.id)}
+                        aria-label={`Xóa ${p.name}`}
+                        title={`Xóa ${p.name}`}
+                        className="bauhaus-button bauhaus-button-outline min-h-9 px-2 py-1 text-[#D02020]"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ),
             )}
             {products.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-slate-500">
-                  No products found
+                <td colSpan={6} className="py-8 text-center text-black/60">
+                  Không tìm thấy sản phẩm.
                 </td>
               </tr>
             )}

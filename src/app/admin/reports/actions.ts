@@ -49,11 +49,16 @@ const saleSchema = z
     note: z.string().max(500).optional().or(z.literal("")),
   })
   .refine((row) => row.product_id || row.product_name, {
-    message: "Enter product_id or product_name",
+    message: "Vui lòng cung cấp mã hoặc tên sản phẩm.",
     path: ["product_id"],
   });
 
 function parseRows<T>(sheet: string, rows: unknown[], schema: z.ZodType<T>) {
+  const sheetLabels: Record<string, string> = {
+    Categories: "Danh mục",
+    Products: "Sản phẩm",
+    Sales: "Giao dịch",
+  };
   const parsedRows: { value: T; rowNumber: number }[] = [];
   const errors: string[] = [];
 
@@ -63,7 +68,7 @@ function parseRows<T>(sheet: string, rows: unknown[], schema: z.ZodType<T>) {
       parsedRows.push({ value: parsed.data, rowNumber: index + 2 });
     } else {
       errors.push(
-        `${sheet} row ${index + 2}: ${parsed.error.issues[0].message}`,
+        `${sheetLabels[sheet] ?? "Dữ liệu"}, dòng ${index + 2}: Dữ liệu không hợp lệ. Vui lòng kiểm tra giá trị và định dạng.`,
       );
     }
   });
@@ -89,7 +94,7 @@ export async function importWorkbook(
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "You must be signed in to import data." };
+  if (!user) return { error: "Bạn cần đăng nhập để nhập dữ liệu." };
 
   if (
     !input ||
@@ -97,16 +102,16 @@ export async function importWorkbook(
     !Array.isArray(input.Products) ||
     !Array.isArray(input.Sales)
   ) {
-    return { error: "The workbook is missing one or more required sheets." };
+    return { error: "Tệp bảng tính thiếu một hoặc nhiều trang tính bắt buộc." };
   }
 
   const totalRows =
     input.Categories.length + input.Products.length + input.Sales.length;
   if (totalRows > 500) {
-    return { error: "Import is limited to 500 total data rows per workbook." };
+    return { error: "Mỗi tệp chỉ được nhập tối đa 500 dòng dữ liệu." };
   }
   if (new TextEncoder().encode(JSON.stringify(input)).byteLength > 700_000) {
-    return { error: "The workbook data is too large to import in one batch." };
+    return { error: "Tệp có quá nhiều dữ liệu để nhập trong một lần." };
   }
 
   const categories = parseRows("Categories", input.Categories, categorySchema);
@@ -136,7 +141,10 @@ export async function importWorkbook(
       })),
     );
     if (error)
-      return { error: `Categories: ${error.message}`, imported: counts };
+      return {
+        error: "Không thể nhập danh mục. Vui lòng thử lại.",
+        imported: counts,
+      };
     counts.categories = categories.rows.length;
   }
 
@@ -144,7 +152,11 @@ export async function importWorkbook(
     const { data: categoryRows, error } = await supabase
       .from("categories")
       .select("id,name");
-    if (error) return { error: `Products: ${error.message}`, imported: counts };
+    if (error)
+      return {
+        error: "Không thể tải danh mục để đối chiếu sản phẩm.",
+        imported: counts,
+      };
 
     const categoryIds = new Map<string, string[]>();
     for (const category of categoryRows ?? []) {
@@ -161,7 +173,7 @@ export async function importWorkbook(
           categoryIds.get(value.category_name.toLocaleLowerCase()) ?? [];
         if (matches.length !== 1) {
           referenceErrors.push(
-            `Products row ${rowNumber}: category_name must match one category exactly.`,
+            `Sản phẩm, dòng ${rowNumber}: category_name phải khớp chính xác với một danh mục.`,
           );
           continue;
         }
@@ -188,7 +200,10 @@ export async function importWorkbook(
       .from("products")
       .insert(productRows);
     if (insertError) {
-      return { error: `Products: ${insertError.message}`, imported: counts };
+      return {
+        error: "Không thể nhập sản phẩm. Vui lòng thử lại.",
+        imported: counts,
+      };
     }
     counts.products = productRows.length;
   }
@@ -197,7 +212,11 @@ export async function importWorkbook(
     const { data: productRows, error } = await supabase
       .from("products")
       .select("id,name");
-    if (error) return { error: `Sales: ${error.message}`, imported: counts };
+    if (error)
+      return {
+        error: "Không thể tải sản phẩm để đối chiếu giao dịch.",
+        imported: counts,
+      };
 
     const productIds = new Map<string, string[]>();
     for (const product of productRows ?? []) {
@@ -212,7 +231,7 @@ export async function importWorkbook(
           productIds.get(value.product_name.toLocaleLowerCase()) ?? [];
         if (matches.length !== 1) {
           return {
-            error: `Sales row ${rowNumber}: product_name must match one product exactly.`,
+            error: `Giao dịch, dòng ${rowNumber}: product_name phải khớp chính xác với một sản phẩm.`,
             imported: counts,
           };
         }
@@ -229,7 +248,7 @@ export async function importWorkbook(
       });
       if (saleError) {
         return {
-          error: `Sales row ${rowNumber}: ${saleError.message}`,
+          error: `Không thể nhập giao dịch ở dòng ${rowNumber}. Vui lòng kiểm tra tồn kho và dữ liệu sản phẩm.`,
           imported: counts,
         };
       }

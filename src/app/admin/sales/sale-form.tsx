@@ -40,19 +40,20 @@ export function SaleForm({ products }: { products: Product[] }) {
     <form
       id="sale-form"
       action={onSubmit}
-      className="bg-white p-4 rounded-xl shadow-sm grid grid-cols-2 lg:grid-cols-6 gap-3"
+      className="bauhaus-panel bauhaus-shadow grid grid-cols-2 gap-3 p-4 lg:grid-cols-6"
     >
       <select
         name="product_id"
         required
         value={productId}
         onChange={(e) => onChangeProduct(e.target.value)}
-        className="border rounded px-3 py-2 col-span-2"
+        aria-label="Sản phẩm"
+        className="bauhaus-field col-span-2"
       >
-        <option value="">Select product *</option>
+        <option value="">Chọn sản phẩm *</option>
         {products.map((p) => (
           <option key={p.id} value={p.id}>
-            {p.name} — {formatCurrency(p.price)} ({p.stock} in stock)
+            {p.name} — {formatCurrency(p.price)} (còn {p.stock})
           </option>
         ))}
       </select>
@@ -62,9 +63,10 @@ export function SaleForm({ products }: { products: Product[] }) {
         min="1"
         value={qty}
         onChange={(e) => setQty(e.target.value)}
-        placeholder="Qty"
+        placeholder="Số lượng"
         required
-        className="border rounded px-3 py-2"
+        aria-label="Số lượng"
+        className="bauhaus-field"
       />
       <input
         name="unit_price"
@@ -72,41 +74,47 @@ export function SaleForm({ products }: { products: Product[] }) {
         step="0.01"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
-        placeholder="Unit price"
+        placeholder="Đơn giá"
         required
-        className="border rounded px-3 py-2"
+        aria-label="Đơn giá"
+        className="bauhaus-field"
       />
       <input
         name="customer_name"
-        placeholder="Customer"
-        className="border rounded px-3 py-2"
+        placeholder="Tên khách hàng"
+        aria-label="Tên khách hàng"
+        className="bauhaus-field"
       />
       <input
         name="customer_phone"
-        placeholder="Phone"
-        className="border rounded px-3 py-2"
+        placeholder="Số điện thoại"
+        aria-label="Số điện thoại khách hàng"
+        className="bauhaus-field"
       />
       <div className="col-span-2 lg:col-span-6 flex items-center justify-between">
-        <div className="text-sm text-slate-600">
-          Total:{" "}
-          <span className="font-semibold text-slate-900">
-            {formatCurrency(total)}
-          </span>
+        <div className="text-sm">
+          Thành tiền:{" "}
+          <span className="font-black">{formatCurrency(total)}</span>
           {selected && (
-            <span className="ml-3 text-slate-500">
-              Remaining after: {selected.stock - Number(qty || 0)}
+            <span className="ml-3 text-black/60">
+              Tồn kho sau bán: {selected.stock - Number(qty || 0)}
             </span>
           )}
         </div>
         <button
           disabled={pending}
-          className="bg-slate-900 text-white rounded px-4 py-2 disabled:opacity-50"
+          className="bauhaus-button bauhaus-button-red"
         >
-          {pending ? "Recording…" : "Record Sale"}
+          {pending ? "Đang ghi nhận…" : "Ghi nhận giao dịch"}
         </button>
       </div>
       {error && (
-        <p className="text-red-600 text-sm col-span-2 lg:col-span-6">{error}</p>
+        <p
+          role="alert"
+          className="col-span-2 text-sm font-bold text-[#D02020] lg:col-span-6"
+        >
+          {error}
+        </p>
       )}
     </form>
   );

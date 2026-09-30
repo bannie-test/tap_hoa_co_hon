@@ -40,28 +40,35 @@ export function SalesTable({
   const total = sales.reduce((s, x) => s + Number(x.total), 0);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm">
-      <div className="p-3 flex flex-wrap gap-2 border-b items-center">
-        <label className="text-sm text-slate-600">From</label>
+    <div className="bauhaus-panel bauhaus-shadow overflow-hidden">
+      <div className="flex flex-wrap items-center gap-2 border-b-2 border-black p-3">
+        <label htmlFor="sales-from" className="text-sm font-bold uppercase">
+          Từ ngày
+        </label>
         <input
+          id="sales-from"
           type="date"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="border rounded px-2 py-1 text-sm"
+          className="bauhaus-field w-auto text-sm"
         />
-        <label className="text-sm text-slate-600">To</label>
+        <label htmlFor="sales-to" className="text-sm font-bold uppercase">
+          Đến ngày
+        </label>
         <input
+          id="sales-to"
           type="date"
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          className="border rounded px-2 py-1 text-sm"
+          className="bauhaus-field w-auto text-sm"
         />
         <select
+          aria-label="Lọc theo sản phẩm"
           value={product}
           onChange={(e) => setProduct(e.target.value)}
-          className="border rounded px-2 py-1 text-sm"
+          className="bauhaus-field w-auto text-sm"
         >
-          <option value="">All products</option>
+          <option value="">Tất cả sản phẩm</option>
           {products.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
@@ -70,49 +77,47 @@ export function SalesTable({
         </select>
         <button
           onClick={apply}
-          className="bg-slate-900 text-white rounded px-3 py-1 text-sm"
+          className="bauhaus-button bauhaus-button-blue text-sm"
         >
-          Apply
+          Áp dụng
         </button>
-        <div className="ml-auto text-sm">
-          Total: <span className="font-semibold">{formatCurrency(total)}</span>{" "}
-          ({sales.length} rows)
+        <div className="ml-auto text-sm font-bold">
+          Tổng cộng: <span className="font-black">{formatCurrency(total)}</span>{" "}
+          ({sales.length} giao dịch)
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left">
+        <table className="bauhaus-table min-w-[760px]">
+          <thead>
             <tr>
-              <th className="p-3">Date</th>
-              <th className="p-3">Product</th>
-              <th className="p-3">Customer</th>
-              <th className="p-3 text-right">Qty</th>
-              <th className="p-3 text-right">Unit</th>
-              <th className="p-3 text-right">Total</th>
+              <th>Ngày</th>
+              <th>Sản phẩm</th>
+              <th>Khách hàng</th>
+              <th className="text-right">Số lượng</th>
+              <th className="text-right">Đơn giá</th>
+              <th className="text-right">Thành tiền</th>
             </tr>
           </thead>
           <tbody>
             {sales.map((s) => (
-              <tr key={s.id} className="border-t">
-                <td className="p-3">{formatDate(s.sold_at)}</td>
-                <td className="p-3">{s.products?.name}</td>
-                <td className="p-3 text-slate-600">
-                  {s.customer_name ?? "Walk-in"}
+              <tr key={s.id}>
+                <td>{formatDate(s.sold_at)}</td>
+                <td className="font-bold">{s.products?.name}</td>
+                <td className="text-black/60">
+                  {s.customer_name ?? "Khách lẻ"}
                 </td>
-                <td className="p-3 text-right">{s.quantity}</td>
-                <td className="p-3 text-right">
-                  {formatCurrency(s.unit_price)}
-                </td>
-                <td className="p-3 text-right font-medium">
+                <td className="text-right">{s.quantity}</td>
+                <td className="text-right">{formatCurrency(s.unit_price)}</td>
+                <td className="text-right font-bold">
                   {formatCurrency(s.total)}
                 </td>
               </tr>
             ))}
             {sales.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-6 text-center text-slate-500">
-                  No sales
+                <td colSpan={6} className="py-8 text-center text-black/60">
+                  Chưa có giao dịch.
                 </td>
               </tr>
             )}

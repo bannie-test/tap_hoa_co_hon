@@ -20,21 +20,27 @@ export function ProductForm({ categories }: { categories: Category[] }) {
   return (
     <form
       action={onSubmit}
-      className="bg-white p-4 rounded-xl shadow-sm grid grid-cols-2 lg:grid-cols-4 gap-3"
+      className="bauhaus-panel bauhaus-shadow grid grid-cols-2 gap-3 p-4 lg:grid-cols-4"
     >
       <input
         name="name"
-        placeholder="Name *"
+        placeholder="Tên sản phẩm *"
         required
-        className="border rounded px-3 py-2 col-span-2"
+        aria-label="Tên sản phẩm"
+        className="bauhaus-field col-span-2"
       />
       <input
         name="sku"
-        placeholder="SKU"
-        className="border rounded px-3 py-2"
+        placeholder="Mã SKU"
+        aria-label="Mã SKU"
+        className="bauhaus-field"
       />
-      <select name="category_id" className="border rounded px-3 py-2">
-        <option value="">No category</option>
+      <select
+        name="category_id"
+        aria-label="Danh mục"
+        className="bauhaus-field"
+      >
+        <option value="">Không có danh mục</option>
         {categories.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
@@ -45,37 +51,46 @@ export function ProductForm({ categories }: { categories: Category[] }) {
         name="price"
         type="number"
         step="0.01"
-        placeholder="Price *"
+        placeholder="Giá bán *"
         required
-        className="border rounded px-3 py-2"
+        aria-label="Giá bán"
+        className="bauhaus-field"
       />
       <input
         name="cost"
         type="number"
         step="0.01"
-        placeholder="Cost"
-        className="border rounded px-3 py-2"
+        placeholder="Giá vốn"
+        aria-label="Giá vốn"
+        className="bauhaus-field"
       />
       <input
         name="stock"
         type="number"
-        placeholder="Stock"
-        className="border rounded px-3 py-2"
+        placeholder="Tồn kho"
+        aria-label="Tồn kho"
+        className="bauhaus-field"
       />
       <input
         name="low_stock_threshold"
         type="number"
-        placeholder="Low stock alert"
-        className="border rounded px-3 py-2"
+        placeholder="Ngưỡng cảnh báo tồn kho"
+        aria-label="Ngưỡng cảnh báo tồn kho thấp"
+        className="bauhaus-field"
       />
       <button
         disabled={pending}
-        className="bg-slate-900 text-white rounded px-4 py-2 col-span-2 lg:col-span-4 disabled:opacity-50"
+        className="bauhaus-button bauhaus-button-red col-span-2 lg:col-span-4"
       >
-        {pending ? "Adding…" : "Add Product"}
+        {pending ? "Đang thêm…" : "Thêm sản phẩm"}
       </button>
       {error && (
-        <p className="text-red-600 text-sm col-span-2 lg:col-span-4">{error}</p>
+        <p
+          role="alert"
+          className="col-span-2 text-sm font-bold text-[#D02020] lg:col-span-4"
+        >
+          {error}
+        </p>
       )}
     </form>
   );

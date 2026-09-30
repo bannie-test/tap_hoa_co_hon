@@ -9,14 +9,7 @@ import {
   Legend,
 } from "recharts";
 
-const COLORS = [
-  "#0f172a",
-  "#334155",
-  "#64748b",
-  "#94a3b8",
-  "#cbd5e1",
-  "#e2e8f0",
-];
+const COLORS = ["#D02020", "#1040C0", "#F0C020", "#121212", "#E0E0E0"];
 
 export function CategoryPie({
   data,
@@ -34,7 +27,12 @@ export function CategoryPie({
           label
         >
           {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            <Cell
+              key={i}
+              fill={COLORS[i % COLORS.length]}
+              stroke="#121212"
+              strokeWidth={1}
+            />
           ))}
         </Pie>
         <Tooltip />
